@@ -95,6 +95,7 @@ namespace CustomerRestServiceEx.Controllers
             using (SqlConnection conn=new SqlConnection(connectionString))
             {
                 conn.Open();
+
                 using (SqlCommand command=new SqlCommand(insertString,conn))
                 {
                     command.Parameters.AddWithValue("@firstname", value.FirstName);
