@@ -179,8 +179,21 @@ namespace CustomerRestServiceEx.Controllers
 
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public int Delete(int id)
         {
+            const string deleteStatement = "DELETE FROM dbo.orders WHERE Id=@id";
+            using (SqlConnection conn=new SqlConnection(connectionString))
+            {
+                conn.Open();
+                using ( SqlCommand command=new SqlCommand(deleteStatement,conn))
+                {
+                    command.Parameters.AddWithValue("@id", id);
+                    int rawsAffected = command.ExecuteNonQuery();
+
+                    return rawsAffected;
+                }
+            }
+
         }
     }
 }
