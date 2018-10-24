@@ -13,25 +13,28 @@ namespace CustomerRestServiceEx.Controllers
     [ApiController]
     public class OrderController : ControllerBase
     {
-        //SELECT dbo.customer.Id,dbo.customer.FirstName,dbo.customer.LastName,dbo.customer.Year FROM dbo.customer  INNER JOIN dbo.orders ON orders.CustomerId = customer.Id
-        //Select * from orders where CustomerId=3
 
         private string connectionString = ConnectionString.connectionString;
 
         // GET: api/Order
         [HttpGet]
+        //return book instead string
         public IEnumerable<Order> Get()
         {
             string selectString = "SELECT * FROM orders";
 
+            //using handle the connection and it close it automatically 
             using (SqlConnection conn=new SqlConnection(connectionString))
             {
                 conn.Open();
+
+                //the command is select string 
                 using ( SqlCommand command=new SqlCommand(selectString, conn))
                 {
 
                     using ( SqlDataReader reader =command.ExecuteReader())
                     {
+                        //to retrive the book into a list
                         List<Order> result=new List<Order>();
 
                         while (reader.Read())
@@ -48,9 +51,10 @@ namespace CustomerRestServiceEx.Controllers
             }
             return null;
         }
-
+        //to read 1 row book
         private Order ReadOrder(SqlDataReader reader)
         {
+            //reader is for reading the data from DB as same type
             int id = reader.GetInt32(0);
             int customerId = reader.GetInt32(1);
             string description = reader.GetString(2);
@@ -63,6 +67,7 @@ namespace CustomerRestServiceEx.Controllers
         }
 
         // GET: api/Order/5
+        //root to spicify the method how to address this function in the rest way from browser or java or type 
         [Route("orderBy/{Customerid}")]
         public IEnumerable<Order>  Get(int Customerid)
 
@@ -75,6 +80,8 @@ namespace CustomerRestServiceEx.Controllers
 
                 using (SqlCommand command = new SqlCommand(selectString, conn))
                 {
+                    //assign what ever id
+                    //@id the name of the place holder and more secure because sql injection
                     command.Parameters.AddWithValue("@CustomerId", Customerid);
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
@@ -172,9 +179,6 @@ namespace CustomerRestServiceEx.Controllers
                 }
 
             }
-
-
-
         }
 
         // DELETE: api/ApiWithActions/5
